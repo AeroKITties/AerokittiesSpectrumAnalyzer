@@ -33,6 +33,7 @@ class MainWindow(QMainWindow):
         self.initAnalysisTab()
 
     def initDataTab(self):
+        self.ui.tabWidget.setCurrentIndex(0)
         self.ui.tableExcelDataSelection.setColumnCount(2)
         self.ui.tableExcelDataSelection.setHorizontalHeaderLabels(["X", "Y"])
 
@@ -47,13 +48,20 @@ class MainWindow(QMainWindow):
         self.ui.plotTimeDomain.showGrid(True, True)
         self.ui.plotFreqDomain.showGrid(True, True)
 
-        self.ui.plotTimeDomain.getAxis('bottom').setStyle(tickFont=QFont("Calibri", 12))
-        self.ui.plotTimeDomain.getAxis('left').setStyle(tickFont=QFont("Calibri", 12))
-        self.ui.plotFreqDomain.getAxis('bottom').setStyle(tickFont=QFont("Calibri", 12))
-        self.ui.plotFreqDomain.getAxis('left').setStyle(tickFont=QFont("Calibri", 12))
+
+        self.ui.plotTimeDomain.getAxis('bottom').setTickFont(QFont("Calibri", 12))
+        self.ui.plotTimeDomain.getAxis('left').setTickFont(QFont("Calibri", 12))
+        self.ui.plotFreqDomain.getAxis('bottom').setTickFont(QFont("Calibri", 12))
+        self.ui.plotFreqDomain.getAxis('left').setTickFont(QFont("Calibri", 12))
 
         self.ui.plotTimeDomain.addLegend(labelTextSize="12pt", offset=(-20, 20))
         self.ui.plotFreqDomain.addLegend(labelTextSize="12pt", offset=(-20, 20))
+
+        self.ui.plotTimeDomain.getAxis('bottom').setLabel('Time', units="s")
+        self.ui.plotFreqDomain.getAxis('bottom').setLabel('Frequency', units="hz")
+
+        self.ui.plotTimeDomain.setTitle('Сигналы в зависимости от времени')
+        self.ui.plotFreqDomain.setTitle('Спектральная плотность')
 
         self.ui.plotTimeDomain.addItem(self.regionOfInterest)
         self.regionOfInterest.setZValue(10)
@@ -138,7 +146,6 @@ class MainWindow(QMainWindow):
                 self.plotPcovar()
             self.ui.plotFreqDomain.enableAutoRange()
 
-
     def plotWelchPeriodogram(self):
         for i in range(len(self.data)):
             fs = np.median(1 / (self.data[i][0][1:] - self.data[i][0][:-1]))
@@ -153,11 +160,11 @@ class MainWindow(QMainWindow):
             nperseg = min(len(x), self.ui.cmbWelchNperseg.currentData())
             window = self.ui.cmbWelchWindow.currentData()
             f, Pxx_den = signal.welch(y, fs, nperseg=nperseg, window=window)
-            f= f[4:]
+            f = f[4:]
             Pxx_den = Pxx_den[4:]
             pen = pg.mkPen(self.colors[i], width=1, style=QtCore.Qt.PenStyle.DashLine)
             name = f"{self.labels[i]} Spec. Den. (Welch)"
-            curve = pg.PlotDataItem(f, Pxx_den/max(Pxx_den), pen=pen, name=name)
+            curve = pg.PlotDataItem(f, Pxx_den / max(Pxx_den), pen=pen, name=name)
             self.curvesFreq.append(curve)
             self.ui.plotFreqDomain.addItem(self.curvesFreq[-1])
 
@@ -182,9 +189,10 @@ class MainWindow(QMainWindow):
             f = f[4:]
             pen = pg.mkPen(self.colors[i], width=1, style=QtCore.Qt.PenStyle.SolidLine)
             name = f"{self.labels[i]} Spec. Den. (pcovar)"
-            curve = pg.PlotDataItem(f, psd/np.max(psd), pen=pen, name=name)
+            curve = pg.PlotDataItem(f, psd / np.max(psd), pen=pen, name=name)
             self.curvesFreq.append(curve)
             self.ui.plotFreqDomain.addItem(self.curvesFreq[-1])
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
