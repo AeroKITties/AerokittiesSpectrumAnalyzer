@@ -39,7 +39,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tab0">
        <attribute name="title">
@@ -175,7 +175,7 @@
                  </property>
                  <property name="minimumSize">
                   <size>
-                   <width>280</width>
+                   <width>480</width>
                    <height>0</height>
                   </size>
                  </property>
@@ -185,6 +185,12 @@
                  <property name="frameShadow">
                   <enum>QFrame::Plain</enum>
                  </property>
+                 <property name="lineWidth">
+                  <number>1</number>
+                 </property>
+                 <attribute name="horizontalHeaderDefaultSectionSize">
+                  <number>140</number>
+                 </attribute>
                 </widget>
                </item>
               </layout>
@@ -304,6 +310,43 @@
                 <string>Логарифмический масштаб по оси Y</string>
                </property>
               </widget>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_2">
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>Минимальная отображаемая частота</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QDoubleSpinBox" name="sbMinimalPlotFreq">
+                 <property name="decimals">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <double>16.000000000000000</double>
+                 </property>
+                 <property name="singleStep">
+                  <double>0.100000000000000</double>
+                 </property>
+                 <property name="value">
+                  <double>0.500000000000000</double>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="label_6">
+                 <property name="text">
+                  <string>Гц</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </widget>

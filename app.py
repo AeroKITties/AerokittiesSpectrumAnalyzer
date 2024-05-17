@@ -27,15 +27,28 @@ class MainWindow(QMainWindow):
         self.regionOfInterest = pg.LinearRegionItem([0, 1])
         self.curvesTime = []
         self.curvesFreq = []
-        self.colors = ["#0072BD", "#D95319", "#EDB120", "#7E2F8E", "#77AC30", "#77AC30", "#A2142F"]
+        self.colors = ["#0072BD",
+                        "#D95319",
+                        "#EDB120",
+                        "#7E2F8E",
+                        "#77AC30",
+                        "#4DBEEE",
+                        "#A2142F",
+                        "#2ca02c",
+                        "#8c564b",
+                        "#e377c2",
+                        "#030764",
+                        "#ffff14"]
 
         self.initDataTab()
         self.initAnalysisTab()
 
+        print(self.ui.tableExcelDataSelection.width())
+
     def initDataTab(self):
         self.ui.tabWidget.setCurrentIndex(0)
-        self.ui.tableExcelDataSelection.setColumnCount(2)
-        self.ui.tableExcelDataSelection.setHorizontalHeaderLabels(["X", "Y"])
+        self.ui.tableExcelDataSelection.setColumnCount(3)
+        self.ui.tableExcelDataSelection.setHorizontalHeaderLabels(["X", "Y", "Name(optional)"])
 
         self.ui.pbImportFromExcel.clicked.connect(self.excelImporter.importExcelFile)
         self.ui.cbExcelHasIndexColumn.stateChanged.connect(self.excelImporter.parseExcelFile)
@@ -47,7 +60,6 @@ class MainWindow(QMainWindow):
     def initAnalysisTab(self):
         self.ui.plotTimeDomain.showGrid(True, True)
         self.ui.plotFreqDomain.showGrid(True, True)
-
 
         self.ui.plotTimeDomain.getAxis('bottom').setTickFont(QFont("Calibri", 12))
         self.ui.plotTimeDomain.getAxis('left').setTickFont(QFont("Calibri", 12))
@@ -76,6 +88,7 @@ class MainWindow(QMainWindow):
         self.regionOfInterest.sigRegionChangeFinished.connect(self.updateFreqPlot)
 
         self.ui.cbYLogScale.clicked.connect(self.updateFreqPlot)
+        self.ui.sbMinimalPlotFreq.valueChanged.connect(self.updateFreqPlot)
 
         self.initWelch()
         self.initPcovar()
@@ -160,10 +173,11 @@ class MainWindow(QMainWindow):
             nperseg = min(len(x), self.ui.cmbWelchNperseg.currentData())
             window = self.ui.cmbWelchWindow.currentData()
             f, Pxx_den = signal.welch(y, fs, nperseg=nperseg, window=window)
-            f = f[4:]
-            Pxx_den = Pxx_den[4:]
+            indexes = np.where(f >= self.ui.sbMinimalPlotFreq.value())
+            f = f[indexes]
+            Pxx_den = Pxx_den[indexes]
             pen = pg.mkPen(self.colors[i], width=1, style=QtCore.Qt.PenStyle.DashLine)
-            name = f"{self.labels[i]} Spec. Den. (Welch)"
+            name = f"{self.labels[i]} (метод Уэлча)"
             curve = pg.PlotDataItem(f, Pxx_den / max(Pxx_den), pen=pen, name=name)
             self.curvesFreq.append(curve)
             self.ui.plotFreqDomain.addItem(self.curvesFreq[-1])
@@ -185,10 +199,11 @@ class MainWindow(QMainWindow):
             fs = np.median(1 / (self.data[i][0][1:] - self.data[i][0][:-1]))
             p = pcovar(y, order, nfft, fs)
             f = np.array(p.frequencies())
-            psd = p.psd[4:]
-            f = f[4:]
+            indexes = np.where(f >= self.ui.sbMinimalPlotFreq.value())
+            psd = p.psd[indexes]
+            f = f[indexes]
             pen = pg.mkPen(self.colors[i], width=1, style=QtCore.Qt.PenStyle.SolidLine)
-            name = f"{self.labels[i]} Spec. Den. (pcovar)"
+            name = f"{self.labels[i]} (метод ковариационных функций)"
             curve = pg.PlotDataItem(f, psd / np.max(psd), pen=pen, name=name)
             self.curvesFreq.append(curve)
             self.ui.plotFreqDomain.addItem(self.curvesFreq[-1])

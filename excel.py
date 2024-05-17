@@ -65,6 +65,9 @@ class ExcelImporter:
                 x_label = columns[self.app.ui.tableExcelDataSelection.cellWidget(row, 0).currentData()]
                 y_label = columns[self.app.ui.tableExcelDataSelection.cellWidget(row, 1).currentData()]
                 data.append([np.array(self.excelDataFrame[x_label]), np.array(self.excelDataFrame[y_label])])
+
+                if self.app.ui.tableExcelDataSelection.item(row, 2) is not None:
+                    y_label = self.app.ui.tableExcelDataSelection.item(row, 2).text()
                 labels.append(y_label)
             # self.signals.dataChanged.emit()
             self.app.data = data
