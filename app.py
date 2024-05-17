@@ -178,7 +178,7 @@ class MainWindow(QMainWindow):
             Pxx_den = Pxx_den[indexes]
             pen = pg.mkPen(self.colors[i], width=1, style=QtCore.Qt.PenStyle.DashLine)
             name = f"{self.labels[i]} (метод Уэлча)"
-            curve = pg.PlotDataItem(f, Pxx_den / max(Pxx_den), pen=pen, name=name)
+            curve = pg.PlotDataItem(f, Pxx_den, pen=pen, name=name)
             self.curvesFreq.append(curve)
             self.ui.plotFreqDomain.addItem(self.curvesFreq[-1])
 
@@ -204,7 +204,7 @@ class MainWindow(QMainWindow):
             f = f[indexes]
             pen = pg.mkPen(self.colors[i], width=1, style=QtCore.Qt.PenStyle.SolidLine)
             name = f"{self.labels[i]} (метод ковариационных функций)"
-            curve = pg.PlotDataItem(f, psd / np.max(psd), pen=pen, name=name)
+            curve = pg.PlotDataItem(f, psd, pen=pen, name=name)
             self.curvesFreq.append(curve)
             self.ui.plotFreqDomain.addItem(self.curvesFreq[-1])
 
